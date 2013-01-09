@@ -1,10 +1,16 @@
 #editor
+	#boundingImageBox(style="top:10px; left:140px; width:500px; height:300px;outline:solid blue 1px;")
+		img#userImage(ng-src="{{userImage}}", alt="", border="0", width="{{currentTemplate.mask.width}}", height="{{currentTemplate.mask.height}}", style="-webkit-transform:rotate({{rotateStep}}deg);top:{{currentTemplate.mask.posY}}px; left:{{currentTemplate.mask.posX}}px; border:solid green 1px;")
 	img#maskImage(ng-src="{{currentTemplate.url}}",alt="",border="0")
-	img#userImage(ng-src="{{userImage}}",alt="",border="0",style="border:solid red 1px;")
+	#boundingDragBox(style="top:10px; left:140px; width:500px; height:300px;outline:solid black 1px;")
+		#dragBoxUserImage(style="-webkit-transform:rotate({{rotateStep}}deg); top:{{currentTemplate.mask.posY}}px; left:{{currentTemplate.mask.posX}}px; width:{{currentTemplate.mask.width}}px; height:{{currentTemplate.mask.height}}px; border:dashed white 2px;")	
 	#editorControls
 		#rotate
+			#left(ng-click="rotate('left')") LEFT
+			#right(ng-click="rotate('right')") RIGHT
 		#zoom
-		#move
+			#in(ng-click="zoom('in')") +
+			#out(ng-click="zoom('out')") -
 #uploadControls
 	form(ng-controller="UploadCtrl")
 		input#uploadPC(type="file", onchange="angular.element(this).scope().handlePcUpload(this)") Upload From PC

@@ -5,3 +5,35 @@ body {
 a {
   color: #00B7FF;
 }
+#editor {
+  position: relative;
+  width: 851px;
+  height: 315px;
+  overflow: hidden;
+}
+#editor #boundingImageBox {
+  position: absolute;
+  z-index: 3;
+}
+#editor #boundingImageBox #userImage {
+  position: absolute;
+}
+#editor #maskImage {
+  position: absolute;
+  z-index: 5;
+}
+#editor #boundingDragBox {
+  position: absolute;
+  z-index: 7;
+}
+#editor #boundingDragBox #dragBoxUserImage {
+  position: absolute;
+}
+#editor #editorControls {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  z-index: 10;
+  cursor: pointer;
+  background-color: white;
+}

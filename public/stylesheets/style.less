@@ -6,3 +6,36 @@ body {
 a {
   color: #00B7FF;
 }
+
+#editor {
+	position: relative;
+	width: 851px;
+	height: 315px;
+	overflow: hidden;
+	#boundingImageBox {
+		position: absolute;
+		#userImage {
+			position: absolute;
+		}
+		z-index: 3;
+	}
+	#maskImage{
+		position: absolute;
+		z-index: 5;
+	}
+	#boundingDragBox {
+		position: absolute;
+		#dragBoxUserImage {
+			position: absolute;
+		}
+		z-index: 7;
+	}	
+	#editorControls {
+		position: absolute;
+		top:0px;
+		left:0px;
+		z-index: 10;
+		cursor: pointer;
+		background-color: white;
+	}
+}
