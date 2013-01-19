@@ -8,6 +8,8 @@ var express = require('express')
   , http = require('http')
   , path = require('path');
 
+var Covers = require('./controllers/covers');
+
 var app = express();
 
 app.configure(function(){
@@ -29,6 +31,8 @@ app.configure('development', function(){
 
 app.get('/', routes.index);
 app.get('/views/:view.html', routes.views);
+
+app.post('/resources/covers', Covers.create);
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log("Express server listening on port " + app.get('port'));

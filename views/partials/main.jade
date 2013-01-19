@@ -14,8 +14,19 @@
 #uploadControls
 	form(ng-controller="UploadCtrl")
 		input#uploadPC(type="file", onchange="angular.element(this).scope().handlePcUpload(this)") Upload From PC
-	button Upload From Facebook Album
-	button Snap From Webcam
+	#facebookControls(ng-controller="FbCtrl")
+		#popupFacebook
+			.fbImages(ng-repeat="picture in pictures")
+				img(ng-src="{{picture.picture}}", ng-click="selectPicture($index)", alt="", border="0")
+		button(ng-click="handleFbLogin()") Upload From Facebook Album
+	#webcamControls(ng-controller="webcamCtrl")
+		#popupWebcam
+			#videoWrapper
+				#viewPort
+				video#vid(autoplay,ng-show="showWebcam", width="150", height="150")
+			canvas#canvas(width="150",height="150",style="display:none;")
+			button(ng-click="snapshot()") Take Picture
+		button(ng-click="toggleVideo()") Snap From Webcam
 #templatesGallery
 	.galleryItem(ng-repeat="template in templates")
 		img(ng-src="{{template.thumb}}", ng-click="selectTemplate($index)", alt="",border="0")
@@ -23,6 +34,4 @@
 	form
 		input(type="email")
 		input(type="text")
-		input(type="submit")
-#popupWebcam
-#popupFacebook
+		input(type="submit", ng-click="sendForm()")

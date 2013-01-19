@@ -37,3 +37,14 @@ a {
   cursor: pointer;
   background-color: white;
 }
+#uploadControls #webcamControls #popupWebcam #videoWrapper {
+  position: relative;
+}
+#uploadControls #webcamControls #popupWebcam #videoWrapper #viewPort {
+  position: absolute;
+  width: 150px;
+  height: 150px;
+  border: dotted red 2px;
+  top: 44px;
+  left: 84px;
+}
