@@ -1,8 +1,11 @@
-canvas#finalImage(width="851", height="315")
+#finalResult(ng-show="glob.showFinalResult")
+	canvas#finalImage(width="851", height="315")
+	#profilePicWrapper
+		img#profilePic(alt="", border="0", width="160", height="160")
 #editor	
 	#boundingImageBox(style="top:0px; left:0px; width:851px; height:315px;outline:solid blue 1px;")
 		img#userImage(ng-src="{{userImage}}", alt="", border="0", width="{{currentTemplate.mask.width}}", height="{{currentTemplate.mask.height}}", style="-webkit-transform:rotate({{rotateStep}}deg);top:{{currentTemplate.mask.posY}}px; left:{{currentTemplate.mask.posX}}px; border:solid green 1px;")
-	img#maskImage(ng-src="{{currentTemplate.url}}",alt="",border="0")
+	img#maskImage(ng-src="{{currentTemplate.url}}",alt="",border="0")	
 	#boundingDragBox(style="top:0px; left:0px; width:851px; height:315px;outline:solid black 1px;")
 		#dragBoxUserImage(style="-webkit-transform:rotate({{rotateStep}}deg); top:{{currentTemplate.mask.posY}}px; left:{{currentTemplate.mask.posX}}px; width:{{currentTemplate.mask.width}}px; height:{{currentTemplate.mask.height}}px; border:dashed white 2px;")	
 	#editorControls
@@ -11,7 +14,7 @@ canvas#finalImage(width="851", height="315")
 			#right(ng-click="rotate('right')") RIGHT
 		#zoom
 			#in(ng-click="zoom('in')") +
-			#out(ng-click="zoom('out')") -
+			#out(ng-click="zoom('out')") -	
 #uploadControls
 	form(ng-controller="UploadCtrl")
 		input#uploadPC(type="file", onchange="angular.element(this).scope().handlePcUpload(this)") Upload From PC
@@ -28,7 +31,7 @@ canvas#finalImage(width="851", height="315")
 			canvas#canvas(width="150",height="150",style="display:none;")
 			button(ng-click="snapshot()") Take Picture
 		button(ng-click="toggleVideo()") Snap From Webcam
-#templatesGallery
+#templatesGallery(style="margin-top:200px;")
 	.galleryItem(ng-repeat="template in templates")
 		img(ng-src="{{template.thumb}}", ng-click="selectTemplate($index)", alt="",border="0")
 #popupForm(ng-controller="formCtrl")

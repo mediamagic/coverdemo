@@ -8,14 +8,17 @@ var GlobalCtrl = ['$scope', '$resource', '$location', '$window', '$routeParams',
 		$scope.templates = res;	
 		$scope.currentTemplate = $scope.templates[0];
 	});	
+
+	$scope.Settings = $scope.resource('/resources/settings');	
 	
+	$scope.Settings.query({}, function(res) {
+		$scope.settings = res[0];	
+	});	
+
 	$scope.Covers = $scope.resource('/resources/covers/:action/:id');
 
-	// TEMP - this should be dynamic from DB
-	$scope.fbPermissions = {email:1,publish_stream:1,user_photos:1};
-	$scope.settings.thumbsWidth = 200;
-	$scope.settings.thumbsHeight = 74;
-	//
+	$scope.FB = {};
+	$scope.glob = { showFinalResult:false };
 
 	$scope.handleFbLogin = function(cb){		
 		FB.getLoginStatus(function(res) {
@@ -29,9 +32,11 @@ var GlobalCtrl = ['$scope', '$resource', '$location', '$window', '$routeParams',
 	}
 
 	$scope.checkPermissions = function(cb, user) {
+		$scope.FB.user = user;				
+
 		FB.api('/me/permissions', function(response) {		
 			var valid = true;
-			for(var per in $scope.fbPermissions) {
+			for(var per in $scope.settings.facebook.permissions) {
 				if(!response.data[0][per])
 					valid = false;									
 			}
@@ -41,7 +46,7 @@ var GlobalCtrl = ['$scope', '$resource', '$location', '$window', '$routeParams',
 
 	$scope.fbLogin = function(cb){
 		var pers = [];
-		for(var per in $scope.fbPermissions)
+		for(var per in $scope.settings.facebook.permissions)
 			pers.push(per);
 		FB.login(function(res) {			
 			if(res.status === 'connected')
@@ -136,7 +141,7 @@ var FbCtrl = ['$scope', function($scope) {
 var webcamCtrl = ['$scope', function($scope){
 
 	$scope.showWebcam = false;
-	var video = document.querySelector("#vid");
+	var video = document.querySelector("#vid");	
     var canvas = document.querySelector('#canvas');
     var ctx = canvas.getContext('2d');
     var localMediaStream = null;
@@ -148,15 +153,23 @@ var webcamCtrl = ['$scope', function($scope){
         console.log('Camera did not work.', e);
     };
    
-   	$scope.toggleVideo = function(){
-		navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
-		window.URL = window.URL || window.webkitURL;
-		navigator.getUserMedia({video:true}, function (stream) {
+   	$scope.toggleVideo = function(){   		
+		navigator.getMedia = (navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia);
+		window.URL = window.URL || window.webkitURL;		
+		navigator.getMedia({video:true, audio:false}, function (stream) {
 			console.log('getting user media');
 			$scope.$apply(function() {
 				$scope.showWebcam = true;
-			});
-			video.src = window.URL.createObjectURL(stream);
+			});			
+	
+			if(!navigator.mozGetUserMedia) {
+				var stream_url = window.URL.createObjectURL(stream);			
+				video.src = stream_url;			
+			} else {					
+				video.mozSrcObject = stream;			
+				video.play();
+			}
+
 			localMediaStream = stream;
 		}, onCameraFail);
    	}
@@ -210,6 +223,7 @@ var formCtrl = ['$scope', function($scope){
 	$scope.prepareImage = function(cb) {
 		var image = new Image
 		, template = new Image
+		, waterMark = new Image
 		, can = document.querySelector('#finalImage')
 		,  ctx = can.getContext('2d');
 
@@ -230,17 +244,35 @@ var formCtrl = ['$scope', function($scope){
 			ctx.save();
 			ctx.drawImage(template, 0, 0, 851, 315);
 			ctx.restore();
-			
-			$scope.finalImage = can.toDataURL();
 
-			var thumb = new Image;
-			thumb.onload = function() {				
-				$scope.thumbnail = getBase64Image(thumb, $scope.settings.thumbsWidth, $scope.settings.thumbsHeight);
-				cb();
+			// TEST ADDING TEXT
+			ctx.lineWidth=1;
+			ctx.fillStyle="#000000";
+			ctx.lineStyle="#ffff00";
+			ctx.font="12px sans-serif";
+			ctx.fillText("This is a demo image taken by mediamagic DEMO app", 20, 20);
+			//
+
+			waterMark.onload = function() {
+				ctx.save();
+				ctx.drawImage(waterMark, $scope.settings.waterMark.posX, $scope.settings.waterMark.posY, $scope.settings.waterMark.width, $scope.settings.waterMark.height);
+				ctx.restore();
+
+				$scope.finalImage = can.toDataURL();					
+				
+				loadProfilePicture($scope);				
+
+				var thumb = new Image;
+				thumb.onload = function() {				
+					$scope.thumbnail = getBase64Image(thumb, $scope.settings.thumbnails.width, $scope.settings.thumbnails.height);
+					cb();
+				}
+				thumb.src = $scope.finalImage;
+
+				return;
 			}
-			thumb.src = $scope.finalImage;
 
-			return;
+			waterMark.src = $scope.settings.waterMark.src;
 		}
 	}
 
@@ -270,4 +302,13 @@ function getBase64Image(img, width, height) {
     var dataURL = canvas.toDataURL("image/png");
 
     return dataURL.replace(/^data:image\/(png|jpg);base64,/, "");
+}
+
+function loadProfilePicture(scope) {
+	var profileImage = document.getElementById('profilePic');
+	profileImage.onload = function() {					
+		scope.glob.showFinalResult = true;				
+	}
+	profileImage.src = "https://graph.facebook.com/" + scope.FB.user.userID + "/picture?type=large";
+				
 }

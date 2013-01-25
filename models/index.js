@@ -98,4 +98,23 @@ db.once('open', function() {
 
 	coversSchema.statics = extendStaticMethods('Covers', ['list', 'add', 'get']);
 	exports.Covers = db.model('Covers', coversSchema);
+
+	var settingsSchema = new mongoose.Schema({
+	waterMark: {
+		src:String,
+		width:{type:Number, default:0},
+		height:{type:Number, default:0},
+		posX:{type:Number, default:0},
+		posY:{type:Number, default:0}
+	},
+	thumbnails: {
+		width:{type:Number, default:0},
+		height:{type:Number, default:0}
+	},
+	facebook: {}
+	});
+
+	settingsSchema.statics = extendStaticMethods('Settings', ['list', 'add']);
+	exports.Settings = db.model('Settings', settingsSchema);
+
 });

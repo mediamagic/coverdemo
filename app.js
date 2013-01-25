@@ -10,7 +10,8 @@ var express = require('express')
   global.root = process.cwd()+'/';
 
 var Covers = require('./controllers/covers'),
-Templates = require('./controllers/templates');
+Templates = require('./controllers/templates'),
+Settings = require('./controllers/settings');
 
 var app = express();
 
@@ -39,6 +40,9 @@ app.get('/resources/image', Covers.read);
 
 app.get('/resources/templates', Templates.index);
 app.post('/resources/templates', Templates.create);
+
+app.get('/resources/settings', Settings.index);
+app.post('/resources/settings', Settings.create);
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log("Express server listening on port " + app.get('port'));
